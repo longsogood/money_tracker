@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Money Tracker</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="login-screen" class="screen">
+  <div class="login-box">
+    <h1>💰 Money Tracker</h1>
+    <input type="password" id="passcode-input" placeholder="Mã truy cập" inputmode="numeric">
+    <button id="login-btn">Vào</button>
+    <p id="login-error" class="hidden"></p>
+  </div>
+</div>
+
+<div id="app-screen" class="hidden">
+  <header>
+    <h1>💰 Money Tracker</h1>
+    <div class="month-nav">
+      <button id="prev-month">‹</button>
+      <span id="month-label"></span>
+      <button id="next-month">›</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="stats-row">
+      <div class="stat-card expense">
+        <span class="label">💸 Chi tiêu</span>
+        <span class="value" id="total-expense">0đ</span>
+      </div>
+      <div class="stat-card income">
+        <span class="label">💰 Thu nhập</span>
+        <span class="value" id="total-income">0đ</span>
+      </div>
+    </section>
+
+    <section class="chart-card">
+      <canvas id="pie-chart"></canvas>
+    </section>
+
+    <section class="chart-card">
+      <canvas id="bar-chart"></canvas>
+    </section>
+
+    <section id="tx-list">
+      <h2>Giao dịch</h2>
+      <div id="tx-items"></div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

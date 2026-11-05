@@ -1,0 +1,173 @@
+:root {
+  --bg: #1a1a2e;
+  --card: #16213e;
+  --card-border: #233358;
+  --text: #e8e8f0;
+  --text-dim: #8a8aa5;
+  --expense: #ff6b6b;
+  --income: #4ecdc4;
+  --accent: #6c5ce7;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.hidden { display: none !important; }
+
+/* Login */
+.screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box {
+  text-align: center;
+  padding: 2rem;
+}
+
+.login-box h1 { margin-bottom: 1.5rem; font-size: 1.5rem; }
+
+.login-box input {
+  width: 220px;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 1.1rem;
+  text-align: center;
+  outline: none;
+}
+
+.login-box button {
+  display: block;
+  margin: 1rem auto 0;
+  padding: 0.8rem 2.5rem;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+#login-error { color: var(--expense); margin-top: 0.8rem; font-size: 0.9rem; }
+
+/* App */
+header {
+  padding: 1.2rem 1rem 0.8rem;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  padding-top: max(1.2rem, env(safe-area-inset-top));
+}
+
+header h1 { font-size: 1.2rem; }
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.month-nav button {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+}
+
+#month-label { font-weight: 600; min-width: 120px; }
+
+main { padding: 0 1rem 2rem; max-width: 600px; margin: 0 auto; }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.stat-card .label { font-size: 0.8rem; color: var(--text-dim); }
+.stat-card .value { font-size: 1.15rem; font-weight: 700; }
+.stat-card.expense .value { color: var(--expense); }
+.stat-card.income .value { color: var(--income); }
+
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  height: 280px;
+}
+
+#tx-list h2 { font-size: 1rem; margin-bottom: 0.8rem; }
+
+.tx-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.tx-item img.thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.tx-item .info { flex: 1; min-width: 0; }
+.tx-item .cat { font-weight: 600; font-size: 0.9rem; }
+.tx-item .note { font-size: 0.8rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tx-item .date { font-size: 0.75rem; color: var(--text-dim); }
+.tx-item .amount { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+.tx-item .amount.expense { color: var(--expense); }
+.tx-item .amount.income { color: var(--income); }
+
+.empty { text-align: center; color: var(--text-dim); padding: 2rem 0; }
+
+/* Lightbox ảnh */
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  cursor: zoom-out;
+}
+
+#lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 8px; }
