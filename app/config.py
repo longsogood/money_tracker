@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     supabase_url: str = ""
     supabase_service_key: str = ""
     database_url: str = ""
-    app_base_url: str = "http://localhost:8000"
     dashboard_passcode: str = "1234"
     allowed_telegram_ids: str = ""  # comma-separated; empty = allow all
     storage_bucket: str = "receipts"
