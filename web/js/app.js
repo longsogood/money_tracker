@@ -348,14 +348,19 @@ function renderCalendar() {
     const txs = calTxByDay.get(dateStr) || [];
     const hasExpense = txs.some(t => t.type === "expense");
     const hasIncome = txs.some(t => t.type === "income");
-    const dayTx = txs[0]; // ảnh đầu tiên của ngày làm nền
 
+    // ảnh chồng chéo: tối đa 4 ảnh, mỗi ảnh một vị trí xoay khác nhau
+    const photos = txs.filter(t => t.image_url).slice(0, 4);
     let cls = "cal-day";
     if (dateStr === todayStr) cls += " today";
-    if (dayTx && dayTx.image_url) cls += " has-img";
+    cls += photos.length ? "" : " no-img";
 
-    let style = "";
-    if (dayTx && dayTx.image_url) style = ` style="--bg-img:url('${dayTx.image_url}')"`;
+    let photoHtml = "";
+    if (photos.length) {
+      photoHtml = '<div class="cal-photos">' +
+        photos.map((t, i) => `<img class="cal-photo p${i + 1}" src="${t.image_url}" onclick="openLightbox('${t.image_url}')" alt="hóa đơn">`).join("") +
+        "</div>";
+    }
 
     let amounts = "";
     if (hasExpense) {
@@ -367,7 +372,8 @@ function renderCalendar() {
       amounts += `<span class="cal-inc">+${fmtShort(total)}</span>`;
     }
 
-    html += `<div class="${cls}"${style}>
+    html += `<div class="${cls}">
+      ${photoHtml}
       <span class="day-num">${d}</span>
       <div class="cal-amounts">${amounts}</div>
     </div>`;
