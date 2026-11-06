@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 pytest_cache/
 server.log
+cleanup_session*
+cleanup_dry_run.txt
