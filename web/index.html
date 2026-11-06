@@ -71,14 +71,30 @@
 
     <section id="tx-section">
       <div class="tx-header">
-        <h2>Giao dịch</h2>
-        <button id="add-btn" class="primary-btn">＋ Thêm</button>
+        <h2>Lịch sử thu chi</h2>
+        <div class="view-toggle">
+          <button id="view-list" class="vt-btn active">Danh sách</button>
+          <button id="view-cal" class="vt-btn">Lịch</button>
+        </div>
       </div>
-      <div class="filter-row">
-        <input type="text" id="search-input" placeholder="🔍 Tìm ghi chú...">
-        <select id="category-filter"><option value="">Tất cả nhóm</option></select>
+
+      <div id="calendar-view" class="hidden">
+        <div class="cal-weekdays">
+          <span>Hai</span><span>Ba</span><span>Tư</span><span>Năm</span><span>Sáu</span><span>Bảy</span><span>CN</span>
+        </div>
+        <div id="cal-grid" class="cal-grid"></div>
       </div>
-      <div id="tx-items"></div>
+
+      <div id="list-view">
+        <div class="tx-header" style="margin-top:0.6rem">
+          <button id="add-btn" class="primary-btn">＋ Thêm</button>
+        </div>
+        <div class="filter-row">
+          <input type="text" id="search-input" placeholder="🔍 Tìm ghi chú...">
+          <select id="category-filter"><option value="">Tất cả nhóm</option></select>
+        </div>
+        <div id="tx-items"></div>
+      </div>
     </section>
   </main>
 

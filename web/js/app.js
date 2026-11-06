@@ -81,6 +81,12 @@ async function loadSummary() {
   renderDailyBar(data.transactions);
   renderTopSpends(data.transactions);
   renderList(data.transactions);
+  calTxByDay = new Map();
+  for (const t of data.transactions) {
+    if (!calTxByDay.has(t.occurred_at)) calTxByDay.set(t.occurred_at, []);
+    calTxByDay.get(t.occurred_at).push(t);
+  }
+  renderCalendar();
   loadTrend();
 }
 
@@ -253,11 +259,12 @@ function renderList(txs) {
     const cat = t.categories ? `${t.categories.emoji || ""} ${t.categories.name}` : "❓ Khác";
     const sign = t.type === "income" ? "+" : "-";
     const cls = t.type;
+    const badge = `<span class="badge ${cls}">${t.type === "income" ? "THU" : "CHI"}</span>`;
     const thumb = t.image_url ? `<img class="thumb" src="${t.image_url}" onclick="openLightbox('${t.image_url}')" alt="hóa đơn">` : "";
     return `<div class="tx-item">
       ${thumb}
       <div class="info">
-        <div class="cat">${cat}</div>
+        <div class="cat">${badge}${cat}</div>
         <div class="note">${t.note || ""}</div>
         <div class="date">${t.occurred_at}</div>
       </div>
@@ -305,7 +312,73 @@ async function loadCategories() {
     data.data.map(c => `<option value="${c.id}">${c.emoji || ""} ${c.name}</option>`).join("");
 }
 
-// ---------- Add modal ----------
+// ---------- Calendar view ----------
+const VN_MONTHS = ["Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6","Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12"];
+let calTxByDay = null;
+
+document.getElementById("view-cal").addEventListener("click", () => {
+  document.getElementById("view-cal").classList.add("active");
+  document.getElementById("view-list").classList.remove("active");
+  document.getElementById("calendar-view").classList.remove("hidden");
+  document.getElementById("list-view").classList.add("hidden");
+  renderCalendar();
+});
+document.getElementById("view-list").addEventListener("click", () => {
+  document.getElementById("view-list").classList.add("active");
+  document.getElementById("view-cal").classList.remove("active");
+  document.getElementById("list-view").classList.remove("hidden");
+  document.getElementById("calendar-view").classList.add("hidden");
+});
+
+const fmtShort = v => {
+  if (v >= 1e6) return (v / 1e6).toFixed(v % 1e6 ? 1 : 0) + "tr";
+  if (v >= 1e3) return Math.round(v / 1e3) + "k";
+  return Math.round(v);
+};
+
+function renderCalendar() {
+  if (!calTxByDay) return;
+  const grid = document.getElementById("cal-grid");
+  const firstDay = new Date(currentYear, currentMonth - 1, 1);
+  const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+  // thứ 2 = index 0
+  let startOffset = (firstDay.getDay() + 6) % 7;
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  let html = "";
+  for (let i = 0; i < startOffset; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${currentYear}-${String(currentMonth).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const txs = calTxByDay.get(dateStr) || [];
+    const hasExpense = txs.some(t => t.type === "expense");
+    const hasIncome = txs.some(t => t.type === "income");
+    const dayTx = txs[0]; // ảnh đầu tiên của ngày làm nền
+
+    let cls = "cal-day";
+    if (dateStr === todayStr) cls += " today";
+    if (dayTx && dayTx.image_url) cls += " has-img";
+
+    let style = "";
+    if (dayTx && dayTx.image_url) style = ` style="--bg-img:url('${dayTx.image_url}')"`;
+
+    let amounts = "";
+    if (hasExpense) {
+      const total = txs.filter(t => t.type === "expense").reduce((s, t) => s + Number(t.amount), 0);
+      amounts += `<span class="cal-exp">-${fmtShort(total)}</span>`;
+    }
+    if (hasIncome) {
+      const total = txs.filter(t => t.type === "income").reduce((s, t) => s + Number(t.amount), 0);
+      amounts += `<span class="cal-inc">+${fmtShort(total)}</span>`;
+    }
+
+    html += `<div class="${cls}"${style}>
+      <span class="day-num">${d}</span>
+      <div class="cal-amounts">${amounts}</div>
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
 document.getElementById("add-btn").addEventListener("click", () => {
   document.getElementById("modal-date").value = `${currentYear}-${String(currentMonth).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
   document.getElementById("add-modal").classList.remove("hidden");

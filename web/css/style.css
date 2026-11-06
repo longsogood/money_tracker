@@ -188,6 +188,98 @@ main { padding: 0 1rem 2rem; max-width: 600px; margin: 0 auto; }
 .top-item:last-child { border-bottom: none; }
 .top-item .rank { color: var(--text-dim); margin-right: 0.5rem; }
 
+/* View toggle */
+.view-toggle { display: flex; gap: 0.3rem; }
+.vt-btn {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+  border-radius: 8px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.vt-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Calendar */
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+}
+.cal-weekdays span {
+  text-align: center;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  padding: 0.25rem 0;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-day {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  min-height: 64px;
+  padding: 4px 5px;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.68rem;
+  position: relative;
+  overflow: hidden;
+}
+.cal-day.empty { background: transparent; border-color: transparent; }
+.cal-day.today { border-color: var(--accent); }
+.cal-day .day-num { color: var(--text-dim); font-size: 0.7rem; font-weight: 600; }
+.cal-day.has-img {
+  background-image: var(--bg-img);
+  background-size: cover;
+  background-position: center;
+}
+.cal-day.has-img .day-num {
+  background: rgba(0,0,0,0.45);
+  color: white;
+  border-radius: 4px;
+  padding: 0 4px;
+  align-self: flex-start;
+}
+.cal-day .cal-amounts {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-weight: 600;
+}
+.cal-day.has-img .cal-amounts span {
+  background: rgba(0,0,0,0.5);
+  border-radius: 4px;
+  padding: 0 4px;
+  align-self: flex-start;
+  backdrop-filter: blur(2px);
+}
+.cal-amounts .cal-exp { color: var(--expense); }
+.cal-amounts .cal-inc { color: var(--income); }
+.cal-day.has-img .cal-amounts .cal-exp,
+.cal-day.has-img .cal-amounts .cal-inc { color: white; }
+
+/* Badge thu/chi kiểu locket */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  border-radius: 5px;
+  padding: 1px 5px;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+.badge.expense { background: rgba(255,107,107,0.18); color: var(--expense); }
+.badge.income { background: rgba(78,205,196,0.18); color: var(--income); }
+
 /* Modal */
 .modal {
   position: fixed;

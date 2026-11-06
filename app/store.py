@@ -112,7 +112,7 @@ def get_month_summary(user_id: str, year: int, month: int) -> dict:
 
     res = (
         sb.table("transactions")
-        .select("amount,type,note,occurred_at,categories(name,emoji)")
+        .select("amount,type,note,image_url,occurred_at,categories(name,emoji)")
         .eq("user_id", user_id)
         .gte("occurred_at", start)
         .lt("occurred_at", end)
