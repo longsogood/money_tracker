@@ -94,7 +94,7 @@ async def handle_message(message: dict):
         return
 
     if text.startswith("/"):
-        await handle_command(chat_id, user_id, text)
+        await handle_command(chat_id, user_id, text, message.get("from", {}).get("first_name"))
         return
 
     from app.parser import parse_message
@@ -211,7 +211,7 @@ async def handle_callback(callback: dict):
         await _call("answerCallbackQuery", {"callback_query_id": callback["id"]})
 
 
-async def handle_command(chat_id: int, user_id: str, text: str):
+async def handle_command(chat_id: int, user_id: str, text: str, message_name: str | None = None):
     cmd = text.split()[0].split("@")[0].lower()
     today = dt.date.today()
 
@@ -224,8 +224,54 @@ async def handle_command(chat_id: int, user_id: str, text: str):
             "<b>+15tr lương</b>\n"
             "Gửi ảnh hóa đơn kèm caption vd: <b>50k cà phê</b>\n\n"
             "Lệnh: /today, /month, /undo (xóa giao dịch cuối), "
-            "/budget 10tr (đặt hạn mức), /help",
+            "/budget 10tr (đặt hạn mức), /info (tổng quan), /help",
         )
+    elif cmd in ("/info", "/status"):
+        summary = store.get_month_summary(user_id, today.year, today.month)
+        budget = store.get_budget(user_id)
+        cats = store.get_categories(user_id)
+        total_tx = len(summary["transactions"])
+        with_image = sum(1 for t in summary["transactions"] if t.get("image_url"))
+
+        lines = [
+            "ℹ️ <b>Thông tin & cấu hình</b>",
+            "",
+            f"👤 User: <b>{message_name or 'bạn'}</b>",
+            f"📅 Kỳ hiện tại: <b>Tháng {today.month}/{today.year}</b>",
+            "",
+            "— <b>Tình hình tháng này</b> —",
+            f"💸 Chi: <b>{summary['total_expense']:,.0f}đ</b> ({summary['expense_count']} gd)",
+            f"💰 Thu: <b>{summary['total_income']:,.0f}đ</b> ({summary['income_count']} gd)",
+            f"🖼️ Có ảnh: {with_image}/{total_tx} giao dịch",
+        ]
+        if budget:
+            spent = summary["total_expense"]
+            pct = spent / budget * 100
+            remaining = budget - spent
+            lines += [
+                "",
+                "— <b>Hạn mức (budget)</b> —",
+                f"🎯 {budget:,.0f}đ/tháng",
+                f"Đã dùng: <b>{pct:.0f}%</b> ({spent:,.0f}đ)",
+                f"Còn lại: <b>{remaining:,.0f}đ</b>" + (" 🚨" if remaining < 0 else " ⚠️" if pct >= 80 else ""),
+            ]
+        else:
+            lines += ["", "🎯 Chưa đặt hạn mức — dùng /budget 10tr"]
+        lines += [
+            "",
+            "— <b>Nhóm chi tiêu</b> —",
+            " • ".join(f"{c['emoji'] or ''}{c['name']}" for c in cats[:10]),
+            "",
+            "— <b>Lệnh hữu dụng</b> —",
+            "• <code>50k ăn trưa</code> — ghi chi tiêu",
+            "• <code>+15tr lương</code> — ghi thu nhập",
+            "• Ảnh + caption <code>45k cà phê</code> — ghi kèm hóa đơn",
+            "• /today /month — xem nhanh",
+            "• /undo — xóa giao dịch cuối",
+            "• /budget 10tr — đặt hạn mức",
+            "• /help — hướng dẫn",
+        ]
+        await send_message(chat_id, "\n".join(lines))
     elif cmd == "/today":
         summary = store.get_month_summary(user_id, today.year, today.month)
         today_txs = [t for t in summary["transactions"] if t["occurred_at"] == today.isoformat()]
@@ -283,7 +329,7 @@ async def handle_command(chat_id: int, user_id: str, text: str):
         store.set_budget(user_id, parsed["amount"])
         await send_message(chat_id, f"🎯 Đã đặt hạn mức <b>{parsed['amount']:,.0f}đ</b>/tháng")
     elif cmd == "/help":
-        await handle_command(chat_id, user_id, "/start")
+        await handle_command(chat_id, user_id, "/start", message_name)
     else:
         await send_message(chat_id, "Lệnh không rõ. Xem /help")
 
