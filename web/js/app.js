@@ -312,23 +312,18 @@ async function loadCategories() {
     data.data.map(c => `<option value="${c.id}">${c.emoji || ""} ${c.name}</option>`).join("");
 }
 
-// ---------- Calendar view ----------
-const VN_MONTHS = ["Tháng 1","Tháng 2","Tháng 3","Tháng 4","Tháng 5","Tháng 6","Tháng 7","Tháng 8","Tháng 9","Tháng 10","Tháng 11","Tháng 12"];
-let calTxByDay = null;
+// ---------- Tabs ----------
+document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+  document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
+  if (btn.dataset.tab === "calendar") renderCalendar();
+  window.scrollTo(0, 0);
+}));
 
-document.getElementById("view-cal").addEventListener("click", () => {
-  document.getElementById("view-cal").classList.add("active");
-  document.getElementById("view-list").classList.remove("active");
-  document.getElementById("calendar-view").classList.remove("hidden");
-  document.getElementById("list-view").classList.add("hidden");
-  renderCalendar();
-});
-document.getElementById("view-list").addEventListener("click", () => {
-  document.getElementById("view-list").classList.add("active");
-  document.getElementById("view-cal").classList.remove("active");
-  document.getElementById("list-view").classList.remove("hidden");
-  document.getElementById("calendar-view").classList.add("hidden");
-});
+// ---------- Calendar view ----------
+let calTxByDay = null;
 
 const fmtShort = v => {
   if (v >= 1e6) return (v / 1e6).toFixed(v % 1e6 ? 1 : 0) + "tr";

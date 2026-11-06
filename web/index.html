@@ -32,71 +32,75 @@
   </header>
 
   <main>
-    <section class="stats-row">
-      <div class="stat-card expense">
-        <span class="label">💸 Chi tiêu</span>
-        <span class="value" id="total-expense">0đ</span>
-        <span class="sub" id="compare-expense"></span>
+    <div id="tab-stats" class="tab-panel">
+      <section class="stats-row">
+        <div class="stat-card expense">
+          <span class="label">💸 Chi tiêu</span>
+          <span class="value" id="total-expense">0đ</span>
+          <span class="sub" id="compare-expense"></span>
+        </div>
+        <div class="stat-card income">
+          <span class="label">💰 Thu nhập</span>
+          <span class="value" id="total-income">0đ</span>
+          <span class="sub" id="compare-income"></span>
+        </div>
+      </section>
+
+      <section id="budget-bar" class="hidden">
+        <div class="budget-row">
+          <span id="budget-label"></span>
+        </div>
+        <div class="budget-track"><div class="budget-fill" id="budget-fill"></div></div>
+      </section>
+
+      <section class="chart-card">
+        <canvas id="trend-chart"></canvas>
+      </section>
+
+      <section class="chart-card">
+        <canvas id="pie-chart"></canvas>
+      </section>
+
+      <section class="chart-card">
+        <canvas id="bar-chart"></canvas>
+      </section>
+
+      <section id="top-spends" class="hidden">
+        <h2>Top khoản chi</h2>
+        <div id="top-items"></div>
+      </section>
+    </div>
+
+    <div id="tab-calendar" class="tab-panel hidden">
+      <div class="cal-weekdays">
+        <span>Hai</span><span>Ba</span><span>Tư</span><span>Năm</span><span>Sáu</span><span>Bảy</span><span>CN</span>
       </div>
-      <div class="stat-card income">
-        <span class="label">💰 Thu nhập</span>
-        <span class="value" id="total-income">0đ</span>
-        <span class="sub" id="compare-income"></span>
-      </div>
-    </section>
+      <div id="cal-grid" class="cal-grid"></div>
+    </div>
 
-    <section id="budget-bar" class="hidden">
-      <div class="budget-row">
-        <span id="budget-label"></span>
-      </div>
-      <div class="budget-track"><div class="budget-fill" id="budget-fill"></div></div>
-    </section>
-
-    <section class="chart-card">
-      <canvas id="trend-chart"></canvas>
-    </section>
-
-    <section class="chart-card">
-      <canvas id="pie-chart"></canvas>
-    </section>
-
-    <section class="chart-card">
-      <canvas id="bar-chart"></canvas>
-    </section>
-
-    <section id="top-spends" class="hidden">
-      <h2>Top khoản chi</h2>
-      <div id="top-items"></div>
-    </section>
-
-    <section id="tx-section">
+    <div id="tab-list" class="tab-panel hidden">
       <div class="tx-header">
-        <h2>Lịch sử thu chi</h2>
-        <div class="view-toggle">
-          <button id="view-list" class="vt-btn active">Danh sách</button>
-          <button id="view-cal" class="vt-btn">Lịch</button>
-        </div>
+        <button id="add-btn" class="primary-btn">＋ Thêm giao dịch</button>
       </div>
-
-      <div id="calendar-view" class="hidden">
-        <div class="cal-weekdays">
-          <span>Hai</span><span>Ba</span><span>Tư</span><span>Năm</span><span>Sáu</span><span>Bảy</span><span>CN</span>
-        </div>
-        <div id="cal-grid" class="cal-grid"></div>
+      <div class="filter-row">
+        <input type="text" id="search-input" placeholder="🔍 Tìm ghi chú...">
+        <select id="category-filter"><option value="">Tất cả nhóm</option></select>
       </div>
-
-      <div id="list-view">
-        <div class="tx-header" style="margin-top:0.6rem">
-          <button id="add-btn" class="primary-btn">＋ Thêm</button>
-        </div>
-        <div class="filter-row">
-          <input type="text" id="search-input" placeholder="🔍 Tìm ghi chú...">
-          <select id="category-filter"><option value="">Tất cả nhóm</option></select>
-        </div>
-        <div id="tx-items"></div>
-      </div>
-    </section>
+      <div id="tx-items"></div>
+    </div>
   </main>
+
+  <nav id="tab-bar">
+    <button class="tab-btn active" data-tab="stats">
+      <span class="tab-icon">📊</span><span>Thống kê</span>
+    </button>
+    <button class="tab-btn" data-tab="calendar">
+      <span class="tab-icon">🗓️</span><span>Lịch</span>
+    </button>
+    <button class="tab-btn" data-tab="list">
+      <span class="tab-icon">📋</span><span>Danh sách</span>
+    </button>
+  </nav>
 
   <button id="theme-toggle" title="Sáng/tối">☀️</button>
 

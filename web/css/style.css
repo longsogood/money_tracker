@@ -105,7 +105,35 @@ header h1 { font-size: 1.2rem; }
 
 #month-label { font-weight: 600; min-width: 120px; }
 
-main { padding: 0 1rem 2rem; max-width: 600px; margin: 0 auto; }
+/* Tab bar */
+#tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--card);
+  border-top: 1px solid var(--card-border);
+  padding: 0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));
+  z-index: 30;
+}
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.68rem;
+  padding: 0.3rem 0;
+  cursor: pointer;
+}
+.tab-btn .tab-icon { font-size: 1.25rem; }
+.tab-btn.active { color: var(--accent); }
+
+main { padding: 0 1rem calc(5.5rem + env(safe-area-inset-bottom)); max-width: 600px; margin: 0 auto; }
 
 .stats-row {
   display: grid;
