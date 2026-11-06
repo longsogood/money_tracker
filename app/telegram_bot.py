@@ -111,9 +111,23 @@ async def handle_message(message: dict):
     cats = store.get_categories(user_id)
     PENDING_CATEGORY[telegram_id] = {"tx_id": tx["id"], "user_id": user_id}
     sign = "+" if tx_type == "income" else "-"
+    reply = f"Đã ghi: {sign}{_fmt_money(parsed['amount'])} {parsed['note'] or ''}\nChọn nhóm:"
+
+    if tx_type == "expense":
+        budget = store.get_budget(user_id)
+        if budget:
+            today = dt.date.today()
+            summary = store.get_month_summary(user_id, today.year, today.month)
+            spent = summary["total_expense"]
+            pct = spent / budget * 100
+            if pct >= 100:
+                reply = f"🚨 VƯỢT HẠN MỨC!\n{reply}\n\nĐã chi {spent:,.0f}đ / {budget:,.0f}đ ({pct:.0f}%)"
+            elif pct >= 80:
+                reply = f"⚠️ Cảnh báo: đã chi {pct:.0f}% hạn mức ({spent:,.0f}đ / {budget:,.0f}đ)\n{reply}"
+
     await send_message(
         chat_id,
-        f"Đã ghi: {sign}{_fmt_money(parsed['amount'])} {parsed['note'] or ''}\nChọn nhóm:",
+        reply,
         reply_markup=_category_keyboard(cats),
     )
 
@@ -209,7 +223,8 @@ async def handle_command(chat_id: int, user_id: str, text: str):
             "<b>1tr tiền điện</b>\n"
             "<b>+15tr lương</b>\n"
             "Gửi ảnh hóa đơn kèm caption vd: <b>50k cà phê</b>\n\n"
-            "Lệnh: /today, /month, /stats",
+            "Lệnh: /today, /month, /undo (xóa giao dịch cuối), "
+            "/budget 10tr (đặt hạn mức), /help",
         )
     elif cmd == "/today":
         summary = store.get_month_summary(user_id, today.year, today.month)
@@ -232,6 +247,41 @@ async def handle_command(chat_id: int, user_id: str, text: str):
             for cat, total in summary["by_category"][:8]:
                 lines.append(f"• {cat}: {total:,.0f}đ")
         await send_message(chat_id, "\n".join(lines))
+    elif cmd == "/undo":
+        tx = store.get_last_transaction(user_id)
+        if not tx:
+            await send_message(chat_id, "Không có giao dịch nào để xóa.")
+            return
+        store.delete_transaction(user_id, tx["id"])
+        sign = "+" if tx["type"] == "income" else "-"
+        await send_message(
+            chat_id,
+            f"🗑️ Đã xóa: {sign}{tx['amount']:,.0f}đ {tx.get('note') or ''} ({tx['occurred_at']})",
+        )
+    elif cmd == "/budget":
+        parts = text.split(maxsplit=1)
+        if len(parts) < 2:
+            budget = store.get_budget(user_id)
+            if budget:
+                summary = store.get_month_summary(user_id, today.year, today.month)
+                pct = summary["total_expense"] / budget * 100
+                await send_message(
+                    chat_id,
+                    f"🎯 Hạn mức tháng này: <b>{budget:,.0f}đ</b>\n"
+                    f"Đã chi: <b>{summary['total_expense']:,.0f}đ</b> ({pct:.0f}%)\n"
+                    f"Còn lại: <b>{budget - summary['total_expense']:,.0f}đ</b>\n\n"
+                    f"Đặt lại: /budget 10tr",
+                )
+            else:
+                await send_message(chat_id, "Chưa đặt hạn mức. Dùng: /budget 10tr")
+            return
+        from app.parser import parse_message
+        parsed = parse_message(parts[1])
+        if not parsed or parsed["amount"] <= 0:
+            await send_message(chat_id, "Không hiểu số tiền. Ví dụ: /budget 10tr")
+            return
+        store.set_budget(user_id, parsed["amount"])
+        await send_message(chat_id, f"🎯 Đã đặt hạn mức <b>{parsed['amount']:,.0f}đ</b>/tháng")
     elif cmd == "/help":
         await handle_command(chat_id, user_id, "/start")
     else:

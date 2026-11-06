@@ -36,11 +36,24 @@
       <div class="stat-card expense">
         <span class="label">💸 Chi tiêu</span>
         <span class="value" id="total-expense">0đ</span>
+        <span class="sub" id="compare-expense"></span>
       </div>
       <div class="stat-card income">
         <span class="label">💰 Thu nhập</span>
         <span class="value" id="total-income">0đ</span>
+        <span class="sub" id="compare-income"></span>
       </div>
+    </section>
+
+    <section id="budget-bar" class="hidden">
+      <div class="budget-row">
+        <span id="budget-label"></span>
+      </div>
+      <div class="budget-track"><div class="budget-fill" id="budget-fill"></div></div>
+    </section>
+
+    <section class="chart-card">
+      <canvas id="trend-chart"></canvas>
     </section>
 
     <section class="chart-card">
@@ -51,11 +64,43 @@
       <canvas id="bar-chart"></canvas>
     </section>
 
-    <section id="tx-list">
-      <h2>Giao dịch</h2>
+    <section id="top-spends" class="hidden">
+      <h2>Top khoản chi</h2>
+      <div id="top-items"></div>
+    </section>
+
+    <section id="tx-section">
+      <div class="tx-header">
+        <h2>Giao dịch</h2>
+        <button id="add-btn" class="primary-btn">＋ Thêm</button>
+      </div>
+      <div class="filter-row">
+        <input type="text" id="search-input" placeholder="🔍 Tìm ghi chú...">
+        <select id="category-filter"><option value="">Tất cả nhóm</option></select>
+      </div>
       <div id="tx-items"></div>
     </section>
   </main>
+
+  <button id="theme-toggle" title="Sáng/tối">☀️</button>
+
+  <div id="add-modal" class="modal hidden">
+    <div class="modal-box">
+      <h2>Thêm giao dịch</h2>
+      <div class="seg-toggle">
+        <button class="seg active" data-type="expense">💸 Chi</button>
+        <button class="seg" data-type="income">💰 Thu</button>
+      </div>
+      <input type="number" id="modal-amount" placeholder="Số tiền (đ)" inputmode="numeric">
+      <input type="text" id="modal-note" placeholder="Ghi chú (vd: ăn trưa)">
+      <select id="modal-category"></select>
+      <input type="date" id="modal-date">
+      <div class="modal-actions">
+        <button id="modal-cancel">Hủy</button>
+        <button id="modal-save" class="primary-btn">Lưu</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>

@@ -45,6 +45,7 @@ def save_transaction(
     note: str,
     category_id: str | None = None,
     image_url: str | None = None,
+    occurred_at: str | None = None,
 ) -> dict:
     sb = get_client()
     row = {
@@ -55,6 +56,8 @@ def save_transaction(
         "category_id": category_id,
         "image_url": image_url,
     }
+    if occurred_at:
+        row["occurred_at"] = occurred_at
     res = sb.table("transactions").insert(row).execute()
     return res.data[0]
 
@@ -66,6 +69,37 @@ def upload_receipt(user_id: str, file_bytes: bytes, filename: str) -> str:
         path, file_bytes, {"content-type": "image/jpeg", "upsert": "true"}
     )
     return sb.storage.from_(settings.storage_bucket).get_public_url(path)
+
+
+def get_last_transaction(user_id: str) -> dict | None:
+    sb = get_client()
+    res = (
+        sb.table("transactions")
+        .select("id,amount,type,note,occurred_at")
+        .eq("user_id", user_id)
+        .order("created_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+    return res.data[0] if res.data else None
+
+
+def delete_transaction(user_id: str, tx_id: str):
+    sb = get_client()
+    sb.table("transactions").delete().eq("id", tx_id).eq("user_id", user_id).execute()
+
+
+def set_budget(user_id: str, amount: float) -> float:
+    sb = get_client()
+    sb.table("users").update({"budget": amount}).eq("id", user_id).execute()
+    return amount
+
+
+def get_budget(user_id: str) -> float | None:
+    sb = get_client()
+    res = sb.table("users").select("budget").eq("id", user_id).limit(1).execute()
+    val = res.data[0]["budget"] if res.data else None
+    return float(val) if val is not None else None
 
 
 def get_month_summary(user_id: str, year: int, month: int) -> dict:

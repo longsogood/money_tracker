@@ -9,6 +9,17 @@
   --accent: #6c5ce7;
 }
 
+:root[data-theme="light"] {
+  --bg: #f2f2f7;
+  --card: #ffffff;
+  --card-border: #d8d8e0;
+  --text: #1a1a2e;
+  --text-dim: #6b6b80;
+  --expense: #e64545;
+  --income: #0fa396;
+  --accent: #6c5ce7;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -117,6 +128,123 @@ main { padding: 0 1rem 2rem; max-width: 600px; margin: 0 auto; }
 .stat-card .value { font-size: 1.15rem; font-weight: 700; }
 .stat-card.expense .value { color: var(--expense); }
 .stat-card.income .value { color: var(--income); }
+.stat-card .sub { font-size: 0.72rem; color: var(--text-dim); }
+.stat-card .sub.up { color: var(--expense); }
+.stat-card .sub.down { color: var(--income); }
+
+/* Budget bar */
+#budget-bar { margin-bottom: 1rem; }
+.budget-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.3rem; }
+.budget-track { height: 10px; background: var(--card); border: 1px solid var(--card-border); border-radius: 6px; overflow: hidden; }
+.budget-fill { height: 100%; background: var(--income); border-radius: 6px; transition: width 0.4s; }
+.budget-fill.warn { background: #feca57; }
+.budget-fill.over { background: var(--expense); }
+
+/* Theme toggle */
+#theme-toggle {
+  position: fixed;
+  top: max(0.8rem, env(safe-area-inset-top));
+  right: 1rem;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 20;
+}
+
+/* Tx header + filter */
+.tx-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+.tx-header h2 { font-size: 1rem; margin: 0; }
+
+.primary-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-row { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+.filter-row input, .filter-row select {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.85rem;
+  outline: none;
+}
+.filter-row select { flex: 0 0 130px; }
+
+#top-spends { margin-bottom: 1rem; }
+#top-spends h2 { font-size: 1rem; margin-bottom: 0.8rem; }
+.top-item { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.4rem 0; border-bottom: 1px solid var(--card-border); }
+.top-item:last-child { border-bottom: none; }
+.top-item .rank { color: var(--text-dim); margin-right: 0.5rem; }
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+}
+.modal-box {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 20px 20px 0 0;
+  padding: 1.5rem 1.2rem calc(1.5rem + env(safe-area-inset-bottom));
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.modal-box h2 { font-size: 1.05rem; margin: 0 0 0.3rem; }
+.modal-box input, .modal-box select {
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%;
+}
+.seg-toggle { display: flex; gap: 0.5rem; }
+.seg {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+  border-radius: 10px;
+  padding: 0.55rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.seg.active[data-type="expense"] { background: var(--expense); color: white; border-color: var(--expense); }
+.seg.active[data-type="income"] { background: var(--income); color: white; border-color: var(--income); }
+.modal-actions { display: flex; gap: 0.6rem; margin-top: 0.4rem; }
+.modal-actions button { flex: 1; border-radius: 10px; padding: 0.7rem; font-size: 0.95rem; border: 1px solid var(--card-border); background: var(--bg); color: var(--text); cursor: pointer; }
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+}
+.delete-btn:active { color: var(--expense); }
 
 .chart-card {
   background: var(--card);

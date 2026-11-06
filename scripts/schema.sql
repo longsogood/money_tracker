@@ -4,6 +4,7 @@ create table if not exists users (
     id          uuid primary key default gen_random_uuid(),
     telegram_id bigint unique,
     name        text,
+    budget      numeric(14,2),
     created_at  timestamptz default now()
 );
 
